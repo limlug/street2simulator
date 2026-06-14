@@ -1,0 +1,80 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: street2simulator
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: street2simulator
+  namespace: street2simulator
+  labels:
+    app: street2simulator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: street2simulator
+  template:
+    metadata:
+      labels:
+        app: street2simulator
+    spec:
+      containers:
+        - name: street2simulator
+          image: ghcr.io/limlug/street2simulator:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: street2simulator
+  namespace: street2simulator
+  labels:
+    app: street2simulator
+spec:
+  type: ClusterIP
+  selector:
+    app: street2simulator
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: street2simulator
+  namespace: street2simulator
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
+spec:
+  tls:
+    - hosts:
+        - street2simulator.de
+      secretName: street2simulator-tls
+  rules:
+    - host: street2simulator.de
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: street2simulator
+                port:
+                  number: 80

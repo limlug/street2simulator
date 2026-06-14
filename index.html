@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Street2Simulator — Bicycle IMU Dataset</title>
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Street2Simulator &mdash; Bicycle IMU Dataset</h1>
+    <div class="subtitle">Fraunhofer IAIS &middot; Comparative inertial measurement dataset for real bicycle rides and simulated equivalents</div>
+</header>
+
+<main>
+    <div class="page-wrapper">
+
+        <div class="intro">
+            <h2>About the Dataset</h2>
+            <p>
+                <strong>Street2Simulator</strong> is a comparative dataset pairing real-world bicycle rides with
+                physics-based simulated counterparts. Each participant rode a predefined urban route while wearing
+                six body-mounted IMU sensors recording 3-axis acceleration and gyroscope data at high frequency.
+                The same route was then reproduced in simulation, enabling direct comparison of biomechanical
+                signals between real and simulated conditions.
+            </p>
+            <p>
+                The dataset comprises <strong>10 participant pairs</strong>, with sensors placed at six body
+                positions:
+            </p>
+            <div class="sensor-pills">
+                <span class="sensor-pill">PHR &mdash; Head</span>
+                <span class="sensor-pill">RKL &mdash; Body</span>
+                <span class="sensor-pill">RHL &mdash; Hand Left</span>
+                <span class="sensor-pill">RBL &mdash; Hand Right</span>
+                <span class="sensor-pill">PVL &mdash; Leg Left</span>
+                <span class="sensor-pill">RBR &mdash; Leg Right</span>
+            </div>
+        </div>
+
+        <div class="dataset-grid">
+            <div class="grid-header">
+                <div class="col-label">Participant</div>
+                <span>Real Ride</span>
+                <span>Simulation</span>
+            </div>
+
+            <div class="dataset-row">
+                <div class="dataset-label">Sample 0</div>
+                <a class="btn btn-real" href="./html_data/0_real.html">View Real</a>
+                <a class="btn btn-sim"  href="./html_data/0_sim.html">View Simulation</a>
+            </div>
+
+            <div class="dataset-row">
+                <div class="dataset-label">Sample 1</div>
+                <a class="btn btn-real" href="./html_data/1_real.html">View Real</a>
+                <a class="btn btn-sim"  href="./html_data/1_sim.html">View Simulation</a>
+            </div>
+
+            <div class="dataset-row">
+                <div class="dataset-label">Sample 2</div>
+                <a class="btn btn-real" href="./html_data/2_real.html">View Real</a>
+                <a class="btn btn-sim"  href="./html_data/2_sim.html">View Simulation</a>
+            </div>
+
+            <div class="dataset-row">
+                <div class="dataset-label">Sample 3</div>
+                <a class="btn btn-real" href="./html_data/3_real.html">View Real</a>
+                <a class="btn btn-sim"  href="./html_data/3_sim.html">View Simulation</a>
+            </div>
+
+            <div class="dataset-row">
+                <div class="dataset-label">Sample 4</div>
+                <a class="btn btn-real" href="./html_data/4_real.html">View Real</a>
+                <a class="btn btn-sim"  href="./html_data/4_sim.html">View Simulation</a>
+            </div>
+
+            <div class="dataset-row">
+                <div class="dataset-label">Sample 5</div>
+                <a class="btn btn-real" href="./html_data/5_real.html">View Real</a>
+                <a class="btn btn-sim"  href="./html_data/5_sim.html">View Simulation</a>
+            </div>
+
+            <div class="dataset-row">
+                <div class="dataset-label">Sample 6</div>
+                <a class="btn btn-real" href="./html_data/6_real.html">View Real</a>
+                <a class="btn btn-sim"  href="./html_data/6_sim.html">View Simulation</a>
+            </div>
+
+            <div class="dataset-row">
+                <div class="dataset-label">Sample 7</div>
+                <a class="btn btn-real" href="./html_data/7_real.html">View Real</a>
+                <a class="btn btn-sim"  href="./html_data/7_sim.html">View Simulation</a>
+            </div>
+
+            <div class="dataset-row">
+                <div class="dataset-label">Sample 8</div>
+                <a class="btn btn-real" href="./html_data/8_real.html">View Real</a>
+                <a class="btn btn-sim"  href="./html_data/8_sim.html">View Simulation</a>
+            </div>
+
+            <div class="dataset-row">
+                <div class="dataset-label">Sample 9</div>
+                <a class="btn btn-real" href="./html_data/9_real.html">View Real</a>
+                <a class="btn btn-sim"  href="./html_data/9_sim.html">View Simulation</a>
+            </div>
+
+        </div><!-- /dataset-grid -->
+
+    </div><!-- /page-wrapper -->
+</main>
+
+<footer>
+    <p>Fraunhofer Institute for Intelligent Analysis and Information Systems IAIS &middot; Street2Simulator Dataset</p>
+</footer>
+
+</body>
+</html>

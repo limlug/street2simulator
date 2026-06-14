@@ -1,0 +1,527 @@
+
+<!DOCTYPE html>
+	<head>
+		<script src="https://leeoniya.github.io/uPlot/dist/uPlot.iife.min.js"></script>
+		<script src="./js_data/6_sim.js"></script>
+		<link rel="stylesheet" href="https://leeoniya.github.io/uPlot/dist/uPlot.min.css"/>
+		<link rel="stylesheet" href="./style.css"/>
+		<style>
+			.uplot {
+				display: inline-block;
+				vertical-align: top;
+			}
+		</style>
+	</head>
+  <body><div id="toprow">
+                                    <div class="topblk">
+                                        <video id="v0" tabindex="0", autobuffer width="400px" height="180">
+                                            <source id="vid" type='video/webm; codecs="vp9, opus"'></source>
+                                        </video>
+                                    </div>
+                                    <div class="topblk">
+                                        <div class="metadata">
+                                            <div class="row">
+                                                <div class="key">Age</div>
+                                                <div class="value">22</div>
+                                                <div class="key">Gender</div>
+                                                <div class="value">m</div>
+                                                <div class="key">Bicycle Experience</div>
+                                                <div class="value">2/3</div>
+                                                <div class="key">Simulator Sickness Score</div>
+                                                <div class="value">7/24</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+	<script>
+
+    wl = window.location;
+
+    let uSync = uPlot.sync("both");
+
+	var vid = document.getElementById("v0");
+
+	const wheelZoomHk = [
+		(u) => {
+			let rect = u.over.getBoundingClientRect();
+            u.over.addEventListener(
+                "wheel",
+                (e) => {
+                    let oxRange = u.scales.x.max - u.scales.x.min;
+                    let nxRange = e.deltaY < 0 ? oxRange * 0.95 : oxRange / 0.95;
+                    let nxMin = u.posToVal(u.cursor.left, "x") - (u.cursor.left / rect.width) * nxRange;
+                    if (nxMin < 0) nxMin = 0;
+                    let nxMax = nxMin + nxRange;
+                    if (nxMax > u.data[0].length) nxMax = u.data[0].length;
+                    u.batch(() => {
+                        uPlot.sync(u.cursor.sync.key).plots.forEach((p) => {
+                            p.setScale("x", { min: nxMin, max: nxMax });
+                        });
+                    });
+                },
+                { passive: true },
+            );
+        },
+	];
+    const cursorOpts = {
+        bind: {
+                    mousedown: (u, targ, handler) => {return (e) => {
+                        vid.currentTime = Math.floor((vid.duration * u.cursor.idx) / u.data[0].length,);
+                        if (vid.paused) vid.play(); // play video when plot is clicked
+                        };
+                    },
+                },
+        lock: true,
+		sync: { key: "a" },
+		y: false,
+	};
+    let optsShared = {
+    width: (window.innerWidth / 2) - 50 ,
+					height: 400,
+                    cursor: cursorOpts,
+                    axes: [{}, { scale: "readings", side: 1, grid: { show: true } }],
+                    scales: { auto: false, x: { time: false } },
+                    legend: { show: false },
+				};
+        let opts_PHR_a = {
+            ...optsShared,
+            title: "Head Acceleration",
+            id: "chart_PHR_a",
+            class: "PHR_a",
+            series: [
+            {},
+            {
+              show: true,
+              spanGaps: false,
+              label: "ax",
+              stroke: "red",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "ay",
+              stroke: "green",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "az",
+              stroke: "blue",
+              width: 1,
+            }
+          ],
+          hooks: { ready: wheelZoomHk }
+        };
+        let uplot_PHR_a = new uPlot(opts_PHR_a, data_sim[0][0], document.body);
+        let opts_PHR_g = {
+            ...optsShared,
+            title: "Head Gyroscope",
+            id: "chart_PHR_g",
+            class: "PHR_g",
+            series: [
+            {},
+            {
+              show: true,
+              spanGaps: false,
+              label: "gx",
+              stroke: "red",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "gy",
+              stroke: "green",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "gz",
+              stroke: "blue",
+              width: 1,
+            }
+          ],
+          hooks: { ready: wheelZoomHk }
+        };
+        let uplot_PHR_g = new uPlot(opts_PHR_g, data_sim[0][1], document.body);
+        cursorOverride = document.getElementsByClassName("u-cursor-x");
+	    for (i of [0, 1]) cursorOverride[i].style = "border-right:3px solid #FF2D7D;";
+	    uSync.sub(uplot_PHR_a);
+	    uSync.sub(uplot_PHR_g);
+        
+        let opts_RKL_a = {
+            ...optsShared,
+            title: "Body Acceleration",
+            id: "chart_RKL_a",
+            class: "RKL_a",
+            series: [
+            {},
+            {
+              show: true,
+              spanGaps: false,
+              label: "ax",
+              stroke: "red",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "ay",
+              stroke: "green",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "az",
+              stroke: "blue",
+              width: 1,
+            }
+          ],
+          hooks: { ready: wheelZoomHk }
+        };
+        let uplot_RKL_a = new uPlot(opts_RKL_a, data_sim[1][0], document.body);
+        let opts_RKL_g = {
+            ...optsShared,
+            title: "Body Gyroscope",
+            id: "chart_RKL_g",
+            class: "RKL_g",
+            series: [
+            {},
+            {
+              show: true,
+              spanGaps: false,
+              label: "gx",
+              stroke: "red",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "gy",
+              stroke: "green",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "gz",
+              stroke: "blue",
+              width: 1,
+            }
+          ],
+          hooks: { ready: wheelZoomHk }
+        };
+        let uplot_RKL_g = new uPlot(opts_RKL_g, data_sim[1][1], document.body);
+        cursorOverride = document.getElementsByClassName("u-cursor-x");
+	    for (i of [0, 1]) cursorOverride[i].style = "border-right:3px solid #FF2D7D;";
+	    uSync.sub(uplot_RKL_a);
+	    uSync.sub(uplot_RKL_g);
+        
+        let opts_RHL_a = {
+            ...optsShared,
+            title: "Hand left Acceleration",
+            id: "chart_RHL_a",
+            class: "RHL_a",
+            series: [
+            {},
+            {
+              show: true,
+              spanGaps: false,
+              label: "ax",
+              stroke: "red",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "ay",
+              stroke: "green",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "az",
+              stroke: "blue",
+              width: 1,
+            }
+          ],
+          hooks: { ready: wheelZoomHk }
+        };
+        let uplot_RHL_a = new uPlot(opts_RHL_a, data_sim[2][0], document.body);
+        let opts_RHL_g = {
+            ...optsShared,
+            title: "Hand left Gyroscope",
+            id: "chart_RHL_g",
+            class: "RHL_g",
+            series: [
+            {},
+            {
+              show: true,
+              spanGaps: false,
+              label: "gx",
+              stroke: "red",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "gy",
+              stroke: "green",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "gz",
+              stroke: "blue",
+              width: 1,
+            }
+          ],
+          hooks: { ready: wheelZoomHk }
+        };
+        let uplot_RHL_g = new uPlot(opts_RHL_g, data_sim[2][1], document.body);
+        cursorOverride = document.getElementsByClassName("u-cursor-x");
+	    for (i of [0, 1]) cursorOverride[i].style = "border-right:3px solid #FF2D7D;";
+	    uSync.sub(uplot_RHL_a);
+	    uSync.sub(uplot_RHL_g);
+        
+        let opts_RBL_a = {
+            ...optsShared,
+            title: "Hand right Acceleration",
+            id: "chart_RBL_a",
+            class: "RBL_a",
+            series: [
+            {},
+            {
+              show: true,
+              spanGaps: false,
+              label: "ax",
+              stroke: "red",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "ay",
+              stroke: "green",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "az",
+              stroke: "blue",
+              width: 1,
+            }
+          ],
+          hooks: { ready: wheelZoomHk }
+        };
+        let uplot_RBL_a = new uPlot(opts_RBL_a, data_sim[3][0], document.body);
+        let opts_RBL_g = {
+            ...optsShared,
+            title: "Hand right Gyroscope",
+            id: "chart_RBL_g",
+            class: "RBL_g",
+            series: [
+            {},
+            {
+              show: true,
+              spanGaps: false,
+              label: "gx",
+              stroke: "red",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "gy",
+              stroke: "green",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "gz",
+              stroke: "blue",
+              width: 1,
+            }
+          ],
+          hooks: { ready: wheelZoomHk }
+        };
+        let uplot_RBL_g = new uPlot(opts_RBL_g, data_sim[3][1], document.body);
+        cursorOverride = document.getElementsByClassName("u-cursor-x");
+	    for (i of [0, 1]) cursorOverride[i].style = "border-right:3px solid #FF2D7D;";
+	    uSync.sub(uplot_RBL_a);
+	    uSync.sub(uplot_RBL_g);
+        
+        let opts_PVL_a = {
+            ...optsShared,
+            title: "Leg left Acceleration",
+            id: "chart_PVL_a",
+            class: "PVL_a",
+            series: [
+            {},
+            {
+              show: true,
+              spanGaps: false,
+              label: "ax",
+              stroke: "red",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "ay",
+              stroke: "green",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "az",
+              stroke: "blue",
+              width: 1,
+            }
+          ],
+          hooks: { ready: wheelZoomHk }
+        };
+        let uplot_PVL_a = new uPlot(opts_PVL_a, data_sim[4][0], document.body);
+        let opts_PVL_g = {
+            ...optsShared,
+            title: "Leg left Gyroscope",
+            id: "chart_PVL_g",
+            class: "PVL_g",
+            series: [
+            {},
+            {
+              show: true,
+              spanGaps: false,
+              label: "gx",
+              stroke: "red",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "gy",
+              stroke: "green",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "gz",
+              stroke: "blue",
+              width: 1,
+            }
+          ],
+          hooks: { ready: wheelZoomHk }
+        };
+        let uplot_PVL_g = new uPlot(opts_PVL_g, data_sim[4][1], document.body);
+        cursorOverride = document.getElementsByClassName("u-cursor-x");
+	    for (i of [0, 1]) cursorOverride[i].style = "border-right:3px solid #FF2D7D;";
+	    uSync.sub(uplot_PVL_a);
+	    uSync.sub(uplot_PVL_g);
+        
+        let opts_PVR_a = {
+            ...optsShared,
+            title: "Leg right Acceleration",
+            id: "chart_PVR_a",
+            class: "PVR_a",
+            series: [
+            {},
+            {
+              show: true,
+              spanGaps: false,
+              label: "ax",
+              stroke: "red",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "ay",
+              stroke: "green",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "az",
+              stroke: "blue",
+              width: 1,
+            }
+          ],
+          hooks: { ready: wheelZoomHk }
+        };
+        let uplot_PVR_a = new uPlot(opts_PVR_a, data_sim[5][0], document.body);
+        let opts_PVR_g = {
+            ...optsShared,
+            title: "Leg right Gyroscope",
+            id: "chart_PVR_g",
+            class: "PVR_g",
+            series: [
+            {},
+            {
+              show: true,
+              spanGaps: false,
+              label: "gx",
+              stroke: "red",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "gy",
+              stroke: "green",
+              width: 1,
+            },
+            {
+              show: true,
+              spanGaps: false,
+              label: "gz",
+              stroke: "blue",
+              width: 1,
+            }
+          ],
+          hooks: { ready: wheelZoomHk }
+        };
+        let uplot_PVR_g = new uPlot(opts_PVR_g, data_sim[5][1], document.body);
+        cursorOverride = document.getElementsByClassName("u-cursor-x");
+	    for (i of [0, 1]) cursorOverride[i].style = "border-right:3px solid #FF2D7D;";
+	    uSync.sub(uplot_PVR_a);
+	    uSync.sub(uplot_PVR_g);
+        
+
+        vid.ontimeupdate = function () {
+                p = Math.floor((vid.currentTime / vid.duration) * data_sim[0][0][0].length);
+            
+            uplot_PHR_a.setCursor({ left: uplot_PHR_a.valToPos(data_sim[0][0][0][p], "x") });
+            uplot_PHR_g.setCursor({ left: uplot_PHR_g.valToPos(data_sim[0][1][0][p], "x") });
+        
+            uplot_RKL_a.setCursor({ left: uplot_RKL_a.valToPos(data_sim[1][0][0][p], "x") });
+            uplot_RKL_g.setCursor({ left: uplot_RKL_g.valToPos(data_sim[1][1][0][p], "x") });
+        
+            uplot_RHL_a.setCursor({ left: uplot_RHL_a.valToPos(data_sim[2][0][0][p], "x") });
+            uplot_RHL_g.setCursor({ left: uplot_RHL_g.valToPos(data_sim[2][1][0][p], "x") });
+        
+            uplot_RBL_a.setCursor({ left: uplot_RBL_a.valToPos(data_sim[3][0][0][p], "x") });
+            uplot_RBL_g.setCursor({ left: uplot_RBL_g.valToPos(data_sim[3][1][0][p], "x") });
+        
+            uplot_PVL_a.setCursor({ left: uplot_PVL_a.valToPos(data_sim[4][0][0][p], "x") });
+            uplot_PVL_g.setCursor({ left: uplot_PVL_g.valToPos(data_sim[4][1][0][p], "x") });
+        
+            uplot_PVR_a.setCursor({ left: uplot_PVR_a.valToPos(data_sim[5][0][0][p], "x") });
+            uplot_PVR_g.setCursor({ left: uplot_PVR_g.valToPos(data_sim[5][1][0][p], "x") });
+        
+        };
+        vid.src = "./video_data/" + "6_sim.webm";
+        vid.load();
+      </script></body>
+    </html>
+    
