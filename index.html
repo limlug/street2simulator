@@ -6,123 +6,632 @@
     <title>Street2Simulator — Bicycle IMU Dataset</title>
     <link rel="stylesheet" href="./style.css">
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: #f8f7f4;
+            color: #1a1a1a;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
-        main {
-            flex: 1;
+
+        header {
+            background: #1a2333;
+            color: #fff;
+            padding: 2.5rem 2rem 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+            margin-bottom: 0.6rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        header .tagline {
+            font-size: 0.95rem;
+            color: #8fa8c8;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        header .authors {
+            font-size: 0.85rem;
+            color: #b0c4de;
+        }
+
+        .badge-bar {
+            background: #0f1a28;
+            padding: 0.6rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: #243450;
+            color: #8fa8c8;
+            font-size: 0.75rem;
+            font-family: 'Courier New', monospace;
+            padding: 0.25rem 0.75rem;
+            border-radius: 3px;
+            letter-spacing: 0.04em;
+        }
+
+        .badge strong { color: #c8daf0; }
+
+        main { flex: 1; }
+
+        .page-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        section { margin-bottom: 2.5rem; }
+
+        h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1a2333;
+            margin-bottom: 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 2px solid #1a2333;
+            letter-spacing: 0.01em;
+        }
+
+        p {
+            font-size: 0.95rem;
+            line-height: 1.75;
+            color: #333;
+            margin-bottom: 0.85rem;
+        }
+
+        /* Sensor diagram */
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .sensor-card {
+            background: #fff;
+            border: 1px solid #d4d0c8;
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+        }
+
+        .sensor-card .code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.2rem;
+        }
+
+        .sensor-card .name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #1a2333;
+        }
+
+        .sensor-card .desc {
+            font-size: 0.8rem;
+            color: #555;
+            margin-top: 0.25rem;
+            line-height: 1.5;
+        }
+
+        /* Key findings */
+        .findings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .finding-card {
+            background: #fff;
+            border: 1px solid #d4d0c8;
+            border-left: 4px solid #1a2333;
+            border-radius: 4px;
+            padding: 1rem;
+        }
+
+        .finding-card.significant { border-left-color: #c0392b; }
+        .finding-card.trend { border-left-color: #e67e22; }
+        .finding-card.null { border-left-color: #27ae60; }
+
+        .finding-card .stat {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.4rem;
+        }
+
+        .finding-card .label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1a2333;
+            margin-bottom: 0.3rem;
+        }
+
+        .finding-card .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .finding-card.significant .value { color: #c0392b; }
+        .finding-card.trend .value { color: #e67e22; }
+        .finding-card.null .value { color: #27ae60; }
+
+        /* Dataset table */
+        .dataset-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            background: #fff;
+            border: 1px solid #d4d0c8;
+        }
+
+        .dataset-table thead {
+            background: #1a2333;
+            color: #fff;
+        }
+
+        .dataset-table th {
+            padding: 0.65rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .dataset-table td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid #e8e4dc;
+            vertical-align: middle;
+        }
+
+        .dataset-table tr:last-child td { border-bottom: none; }
+        .dataset-table tr:hover td { background: #f0ede6; }
+
+        .btn {
+            display: inline-block;
+            padding: 0.3rem 0.85rem;
+            border-radius: 3px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-family: sans-serif;
+            font-weight: 600;
+            transition: background 0.15s;
+        }
+
+        .btn-real {
+            background: #1a2333;
+            color: #fff;
+        }
+        .btn-real:hover { background: #2a3a55; }
+
+        .btn-sim {
+            background: #fff;
+            color: #1a2333;
+            border: 1.5px solid #1a2333;
+        }
+        .btn-sim:hover { background: #e8e4dc; }
+
+        .btn-gap { display: inline-block; width: 0.4rem; }
+
+        .participant-meta {
+            font-size: 0.78rem;
+            color: #888;
+            font-family: sans-serif;
+        }
+
+        /* Study design */
+        .design-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .design-card {
+            background: #fff;
+            border: 1px solid #d4d0c8;
+            border-radius: 4px;
+            padding: 1rem;
+        }
+
+        .design-card h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #1a2333;
+            margin-bottom: 0.5rem;
+        }
+
+        .design-card ul {
+            list-style: none;
+            font-size: 0.85rem;
+            color: #444;
+            line-height: 1.8;
+        }
+
+        .design-card ul li::before {
+            content: '— ';
+            color: #999;
+        }
+
+        /* Callout */
+        .callout {
+            background: #eef2f8;
+            border-left: 4px solid #1a2333;
+            padding: 0.9rem 1.2rem;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.88rem;
+            line-height: 1.7;
+            color: #2a3a55;
+            margin: 1rem 0;
+        }
+
+        .callout strong { color: #1a2333; }
+
+        footer {
+            background: #1a2333;
+            color: #8fa8c8;
+            text-align: center;
+            padding: 1.2rem;
+            font-size: 0.8rem;
+            font-family: sans-serif;
+        }
+
+        footer a { color: #b0c4de; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 640px) {
+            .sensor-grid { grid-template-columns: 1fr 1fr; }
+            .findings-grid { grid-template-columns: 1fr; }
+            .design-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Street2Simulator &mdash; Bicycle IMU Dataset</h1>
-    <div class="subtitle">Comparative inertial measurement dataset for real bicycle rides and simulated equivalents</div>
+    <h1>Wearable Sensors Reveal the Reality Gap:<br>A Full-Body Motion Dataset for Validating VR Cycling Simulators</h1>
+    <div class="tagline">Street2Simulator — Openly available benchmark dataset</div>
+    <div class="authors">Jonas Pöhler · Antonia Vitt · Florian Wolling · Florian Michahelles · Kristof Van Laerhoven</div>
 </header>
 
-<main>
-    <div class="page-wrapper">
+<div class="badge-bar">
+    <span class="badge"><strong>10</strong> participants</span>
+    <span class="badge"><strong>6</strong> IMU sensors per session</span>
+    <span class="badge"><strong>120 Hz</strong> sampling rate</span>
+    <span class="badge"><strong>1.4 km</strong> urban route · Vienna</span>
+    <span class="badge"><strong>20</strong> total sessions</span>
+    <span class="badge"><strong>Open access</strong></span>
+</div>
 
-        <div class="intro">
-            <h2>About the Dataset</h2>
-            <p>
-                <strong>Street2Simulator</strong> is a comparative dataset pairing real-world bicycle rides with
-                physics-based simulated counterparts. Each participant rode a predefined urban route while wearing
-                six body-mounted IMU sensors recording 3-axis acceleration and gyroscope data at high frequency.
-                The same route was then reproduced in simulation, enabling direct comparison of biomechanical
-                signals between real and simulated conditions.
-            </p>
-            <p>
-                The dataset comprises <strong>10 participant pairs</strong>, with sensors placed at six body
-                positions:
-            </p>
-            <div class="sensor-pills">
-                <span class="sensor-pill">PHR &mdash; Head</span>
-                <span class="sensor-pill">RKL &mdash; Body</span>
-                <span class="sensor-pill">RHL &mdash; Hand Left</span>
-                <span class="sensor-pill">RBL &mdash; Hand Right</span>
-                <span class="sensor-pill">PVL &mdash; Leg Left</span>
-                <span class="sensor-pill">RBR &mdash; Leg Right</span>
+<main>
+<div class="page-wrapper">
+
+    <!-- Abstract -->
+    <section>
+        <h2>About This Dataset</h2>
+        <p>
+            Virtual reality cycling simulators are increasingly used in research on urban mobility, rehabilitation,
+            and road safety, yet their biomechanical fidelity remains under-validated due to the lack of standardised,
+            publicly available datasets. <strong>Street2Simulator</strong> addresses this gap by providing synchronised,
+            full-body inertial measurement unit (IMU) data from 10 participants who each cycled an identical 1.4 km
+            urban route <em>both</em> in a motion-enabled VR simulator and in the real world.
+        </p>
+        <p>
+            Six body-worn sensors captured head, torso, arm, and leg movements at 120 Hz, enabling detailed
+            comparisons of pedaling rhythm, limb coordination, balance control, and head orientation across
+            environments. Egocentric video was recorded alongside the IMU data in both conditions.
+        </p>
+        <div class="callout">
+            <strong>Key finding:</strong> VR successfully replicates fundamental locomotor patterns such as pedaling
+            cadence and bilateral leg coordination. However, significant differences emerge in upper-body dynamics —
+            participants showed markedly greater torso rotational variability in VR compared to real-world cycling
+            (26.8 vs. 12.4 deg/s; <em>p</em> = 0.020, Cohen's <em>d</em> = 0.96), indicating altered balance strategies
+            in the simulator. IMU signal distributions shift from Cauchy-family (heavy-tailed) in VR to
+            logistic/normal in the real world, revealing a qualitative change in motor control that mean-level
+            comparisons alone cannot capture.
+        </div>
+    </section>
+
+    <!-- Study Design -->
+    <section>
+        <h2>Study Design</h2>
+        <div class="design-grid">
+            <div class="design-card">
+                <h3>VR Condition</h3>
+                <ul>
+                    <li>Stationary bicycle on ±5° lateral tilt platform</li>
+                    <li>Oculus Quest 2 HMD (90 Hz, ~97° FoV)</li>
+                    <li>Unity3D virtual replica of the real-world route</li>
+                    <li>Speed feedback via pedaling cadence (smart trainer)</li>
+                    <li>Mean session duration: 153 s (SD = 27)</li>
+                </ul>
+            </div>
+            <div class="design-card">
+                <h3>Real-World Condition</h3>
+                <ul>
+                    <li>Same bicycle model on a paved urban road in Vienna</li>
+                    <li>1.4 km route: bike paths, intersections, tram tracks</li>
+                    <li>Self-selected comfortable pace</li>
+                    <li>Pupil Labs Core egocentric camera</li>
+                    <li>Mean session duration: 354 s (SD = 54)</li>
+                </ul>
+            </div>
+            <div class="design-card">
+                <h3>Participants</h3>
+                <ul>
+                    <li>N = 10 complete trials (11 recruited, 1 excluded)</li>
+                    <li>9 male, 2 female; mean age 24.4 years (SD = 3.7)</li>
+                    <li>Cycling experience: mean 2.09/5 (moderate)</li>
+                    <li>All sessions in one week (October 2024)</li>
+                    <li>Ethics approved: University of Siegen LS_ER_03_2023</li>
+                </ul>
+            </div>
+            <div class="design-card">
+                <h3>Data Streams</h3>
+                <ul>
+                    <li>Raw tri-axial accelerometer (±8 g)</li>
+                    <li>Raw tri-axial gyroscope (±2000 deg/s)</li>
+                    <li>Egocentric video at 30 fps</li>
+                    <li>Simulator Sickness Questionnaire (SSQ)</li>
+                    <li>Presence, achievement, and affect ratings</li>
+                </ul>
             </div>
         </div>
+    </section>
 
-        <div class="dataset-grid">
-            <div class="grid-header">
-                <div class="col-label">Participant</div>
-                <span>Real Ride</span>
-                <span>Simulation</span>
+    <!-- Sensor Positions -->
+    <section>
+        <h2>Sensor Positions</h2>
+        <p>Six wireless IMU nodes (InvenSense MPU-6050, 120 Hz) were worn simultaneously using elastic straps.
+        Synchronisation across nodes was achieved via a shared radio timestamp; clock drift did not exceed 10 ms per session.</p>
+        <div class="sensor-grid">
+            <div class="sensor-card">
+                <div class="code">PHR</div>
+                <div class="name">Head</div>
+                <div class="desc">Right temporal region. Captures head orientation, yaw range, and visual search behaviour.</div>
             </div>
-
-            <div class="dataset-row">
-                <div class="dataset-label">Sample 0</div>
-                <a class="btn btn-real" href="./html_data/0_real.html">View Real</a>
-                <a class="btn btn-sim"  href="./html_data/0_sim.html">View Simulation</a>
+            <div class="sensor-card">
+                <div class="code">RKL</div>
+                <div class="name">Torso</div>
+                <div class="desc">Sternum / upper back. Primary outcome site for postural sway and balance control.</div>
             </div>
-
-            <div class="dataset-row">
-                <div class="dataset-label">Sample 1</div>
-                <a class="btn btn-real" href="./html_data/1_real.html">View Real</a>
-                <a class="btn btn-sim"  href="./html_data/1_sim.html">View Simulation</a>
+            <div class="sensor-card">
+                <div class="code">RHL</div>
+                <div class="name">Left Forearm</div>
+                <div class="desc">Captures handlebar-transmitted vibration and active steering movement.</div>
             </div>
-
-            <div class="dataset-row">
-                <div class="dataset-label">Sample 2</div>
-                <a class="btn btn-real" href="./html_data/2_real.html">View Real</a>
-                <a class="btn btn-sim"  href="./html_data/2_sim.html">View Simulation</a>
+            <div class="sensor-card">
+                <div class="code">RBL</div>
+                <div class="name">Right Forearm</div>
+                <div class="desc">Mirror of left forearm; enables bilateral upper-limb comparison.</div>
             </div>
-
-            <div class="dataset-row">
-                <div class="dataset-label">Sample 3</div>
-                <a class="btn btn-real" href="./html_data/3_real.html">View Real</a>
-                <a class="btn btn-sim"  href="./html_data/3_sim.html">View Simulation</a>
+            <div class="sensor-card">
+                <div class="code">PVL</div>
+                <div class="name">Left Shank</div>
+                <div class="desc">Lower leg. Used for pedaling cadence extraction (gyroscope peaks = downstroke).</div>
             </div>
-
-            <div class="dataset-row">
-                <div class="dataset-label">Sample 4</div>
-                <a class="btn btn-real" href="./html_data/4_real.html">View Real</a>
-                <a class="btn btn-sim"  href="./html_data/4_sim.html">View Simulation</a>
+            <div class="sensor-card">
+                <div class="code">RBR</div>
+                <div class="name">Right Shank</div>
+                <div class="desc">Mirror of left shank; bilateral coordination quantified via cross-correlation.</div>
             </div>
+        </div>
+    </section>
 
-            <div class="dataset-row">
-                <div class="dataset-label">Sample 5</div>
-                <a class="btn btn-real" href="./html_data/5_real.html">View Real</a>
-                <a class="btn btn-sim"  href="./html_data/5_sim.html">View Simulation</a>
+    <!-- Key Findings -->
+    <section>
+        <h2>Key Results</h2>
+        <div class="findings-grid">
+            <div class="finding-card significant">
+                <div class="label">Torso Angular Rate SD &mdash; Primary Outcome</div>
+                <div class="value">VR: 26.8 &nbsp;vs.&nbsp; Real: 12.4 deg/s</div>
+                <div class="stat">paired t(8) = 2.889, p = 0.020*, d = 0.963 (large)</div>
             </div>
-
-            <div class="dataset-row">
-                <div class="dataset-label">Sample 6</div>
-                <a class="btn btn-real" href="./html_data/6_real.html">View Real</a>
-                <a class="btn btn-sim"  href="./html_data/6_sim.html">View Simulation</a>
+            <div class="finding-card significant">
+                <div class="label">Head Yaw Range</div>
+                <div class="value">VR: 338.9° &nbsp;vs.&nbsp; Real: 220.8°</div>
+                <div class="stat">paired t(7) = 2.726, p = 0.026*, d = 0.909 (large)</div>
             </div>
-
-            <div class="dataset-row">
-                <div class="dataset-label">Sample 7</div>
-                <a class="btn btn-real" href="./html_data/7_real.html">View Real</a>
-                <a class="btn btn-sim"  href="./html_data/7_sim.html">View Simulation</a>
+            <div class="finding-card significant">
+                <div class="label">Overall Impression (0–4 scale)</div>
+                <div class="value">VR: 2.0 &nbsp;vs.&nbsp; Real: 3.4</div>
+                <div class="stat">paired t(10) = −4.404, p = 0.001*, d = −1.328</div>
             </div>
-
-            <div class="dataset-row">
-                <div class="dataset-label">Sample 8</div>
-                <a class="btn btn-real" href="./html_data/8_real.html">View Real</a>
-                <a class="btn btn-sim"  href="./html_data/8_sim.html">View Simulation</a>
+            <div class="finding-card significant">
+                <div class="label">Composite Achievement Score</div>
+                <div class="value">VR: 5.0 &nbsp;vs.&nbsp; Real: 7.3</div>
+                <div class="stat">paired t(10) = −4.077, p = 0.002*, d = −1.229</div>
             </div>
-
-            <div class="dataset-row">
-                <div class="dataset-label">Sample 9</div>
-                <a class="btn btn-real" href="./html_data/9_real.html">View Real</a>
-                <a class="btn btn-sim"  href="./html_data/9_sim.html">View Simulation</a>
+            <div class="finding-card trend">
+                <div class="label">Pedaling Frequency</div>
+                <div class="value">VR: 0.59 &nbsp;vs.&nbsp; Real: 0.82 Hz</div>
+                <div class="stat">paired t(8) = −1.606, p = 0.147 (n.s.), d = −0.535</div>
             </div>
+            <div class="finding-card null">
+                <div class="label">Simulator Sickness (SSQ Total)</div>
+                <div class="value">M = 6.2 &mdash; Mild</div>
+                <div class="stat">Below clinical threshold; no correlation with head motion</div>
+            </div>
+        </div>
+        <p style="margin-top:1rem; font-size:0.83rem; color:#666; font-family:sans-serif;">
+            * p &lt; 0.05 &nbsp;|&nbsp; Red = significant difference VR vs. Real &nbsp;|&nbsp; Orange = trend / underpowered &nbsp;|&nbsp; Green = null / benign result
+        </p>
+    </section>
 
-        </div><!-- /dataset-grid -->
+    <!-- Dataset Browser -->
+    <section>
+        <h2>Dataset Browser</h2>
+        <p>Each row below corresponds to one participant. Both the real-world ride and the VR simulator session
+        are available as interactive time-series viewers with synchronized accelerometer and gyroscope traces
+        for all six body positions.</p>
 
-    </div><!-- /page-wrapper -->
+        <table class="dataset-table">
+            <thead>
+                <tr>
+                    <th>Participant</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Cycling Exp.</th>
+                    <th>View Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>P01</strong></td>
+                    <td class="participant-meta">21</td>
+                    <td class="participant-meta">m</td>
+                    <td class="participant-meta">3/3</td>
+                    <td>
+                        <a href="html_data/0_real.html" class="btn btn-real">Real Ride</a>
+                        <span class="btn-gap"></span>
+                        <a href="html_data/0_sim.html" class="btn btn-sim">Simulation</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>P02</strong></td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td>
+                        <a href="html_data/1_real.html" class="btn btn-real">Real Ride</a>
+                        <span class="btn-gap"></span>
+                        <a href="html_data/1_sim.html" class="btn btn-sim">Simulation</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>P03</strong></td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td>
+                        <a href="html_data/2_real.html" class="btn btn-real">Real Ride</a>
+                        <span class="btn-gap"></span>
+                        <a href="html_data/2_sim.html" class="btn btn-sim">Simulation</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>P04</strong></td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td>
+                        <a href="html_data/3_real.html" class="btn btn-real">Real Ride</a>
+                        <span class="btn-gap"></span>
+                        <a href="html_data/3_sim.html" class="btn btn-sim">Simulation</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>P05</strong></td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td>
+                        <a href="html_data/4_real.html" class="btn btn-real">Real Ride</a>
+                        <span class="btn-gap"></span>
+                        <a href="html_data/4_sim.html" class="btn btn-sim">Simulation</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>P06</strong></td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td>
+                        <a href="html_data/5_real.html" class="btn btn-real">Real Ride</a>
+                        <span class="btn-gap"></span>
+                        <a href="html_data/5_sim.html" class="btn btn-sim">Simulation</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>P07</strong></td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td>
+                        <a href="html_data/6_real.html" class="btn btn-real">Real Ride</a>
+                        <span class="btn-gap"></span>
+                        <a href="html_data/6_sim.html" class="btn btn-sim">Simulation</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>P08</strong></td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td>
+                        <a href="html_data/7_real.html" class="btn btn-real">Real Ride</a>
+                        <span class="btn-gap"></span>
+                        <a href="html_data/7_sim.html" class="btn btn-sim">Simulation</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>P09</strong></td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td>
+                        <a href="html_data/8_real.html" class="btn btn-real">Real Ride</a>
+                        <span class="btn-gap"></span>
+                        <a href="html_data/8_sim.html" class="btn btn-sim">Simulation</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>P10</strong></td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td class="participant-meta">—</td>
+                    <td>
+                        <a href="html_data/9_real.html" class="btn btn-real">Real Ride</a>
+                        <span class="btn-gap"></span>
+                        <a href="html_data/9_sim.html" class="btn btn-sim">Simulation</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="margin-top:0.75rem; font-size:0.82rem; color:#666; font-family:sans-serif;">
+            Each viewer shows tri-axial accelerometer and gyroscope signals for all six body positions.
+            Traces are synchronised — hovering over one plot moves the cursor across all plots simultaneously.
+            Participant metadata (age, gender, cycling experience) is partially anonymised.
+        </p>
+    </section>
+
+    <!-- Citation -->
+    <section>
+        <h2>Citation</h2>
+        <div class="callout" style="font-family:'Courier New',monospace; font-size:0.82rem; line-height:1.7;">
+            Pöhler, J., Vitt, A., Wolling, F., Michahelles, F., &amp; Van Laerhoven, K. (2025).
+            Wearable Sensors Reveal the Reality Gap: A Full-Body Motion Dataset for Validating VR Cycling Simulators.
+            <em>Frontiers in Human Neuroscience / Frontiers in Sports and Active Living.</em>
+            Dataset available at: <a href="https://street2simulator.de">street2simulator.de</a>
+        </div>
+    </section>
+
+</div>
 </main>
 
 <footer>
-    <p>Street2Simulator Dataset</p>
+    <p>Street2Simulator Dataset &nbsp;&middot;&nbsp; University of Siegen &nbsp;&middot;&nbsp; Vienna University of Technology</p>
+    <p style="margin-top:0.4rem;">
+        Ethics approval: University of Siegen LS_ER_03_2023 &nbsp;&middot;&nbsp;
+        <a href="https://github.com/limlug/street2simulator">GitHub</a>
+    </p>
 </footer>
 
 </body>
